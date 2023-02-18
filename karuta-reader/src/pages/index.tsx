@@ -56,10 +56,17 @@ export default function Home() {
 
   let currentCardIndex: number = -1;
   const [karutaLines, setKarutaLines] = useState<CardInfo[]>([]);
+  const [readButtonDisability, setReadButtonDisability] = useState<boolean>(false);
 
   // karutaLines更新後に実行する処理
   useEffect(() => {
     console.log(karutaLines);
+    if(karutaLines.length > 0 && isGameOver()) {
+      setReadButtonDisability(true);
+      setTimeout(() => TTS("ゲーム終了です", "ja-JP"), 5000);
+    } else {
+      setReadButtonDisability(false);
+    }
   }, [karutaLines]);
 
   // 0以上max未満の乱数（整数）を1つ返す関数。
@@ -91,6 +98,16 @@ export default function Home() {
       console.log("failed to upload a file.");
     }
   };
+
+  // ゲームが終了した場合にtrueを返す関数。
+  const isGameOver = (): boolean => {
+    const numRemainingCards: number = karutaLines.reduce((sum, cardInfo) => {
+      if (cardInfo.state === CardState.NotReadYet) return (sum + 1);
+      return sum;
+    }, 0);
+
+    return numRemainingCards === 0;
+  }
 
   const ReadOneText = (): void => {
     let cardIndex = -1;
@@ -148,7 +165,7 @@ export default function Home() {
             }
           })}
         </CardsContainer>
-        <button onClick={ReadOneText}>読み上げる</button>
+        <button onClick={ReadOneText} disabled={readButtonDisability}>読み上げる</button>
       </MainContainer>
     </>
   )
