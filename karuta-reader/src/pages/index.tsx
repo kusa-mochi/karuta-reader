@@ -120,6 +120,7 @@ export default function Home() {
       }
     }));
 
+    // テキストを読み上げる。
     TTS(karutaLines[currentCardIndex].text, 'ja-JP');
   };
 
