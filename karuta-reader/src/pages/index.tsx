@@ -20,7 +20,10 @@ export default function Home() {
       reader.readAsText(file);
       reader.onload = e => {
         const fileContent: string = reader.result as string;
-        setKarutaText(fileContent);
+        const fileLines: string[] = fileContent.split(/\r\n|\n/)
+        console.log(fileContent);
+        console.log(fileLines);
+        setKarutaText(fileLines[20]);
       }
     } else {
       console.log("failed to upload a file.");
