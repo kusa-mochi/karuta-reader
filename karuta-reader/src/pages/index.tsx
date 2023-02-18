@@ -60,14 +60,6 @@ export default function Home() {
   // karutaLines更新後に実行する処理
   useEffect(() => {
     console.log(karutaLines);
-    // const currentCardText: string = karutaLines[currentCardIndex].text;
-    // // 現在のカードを協調表示にする。
-    // setKarutaLines(karutaLines.map(function(cardInfo: CardInfo): CardInfo {
-    //   return {
-    //     text: cardInfo.text,
-    //     state: cardInfo.text === currentCardText ? CardState.CurrentCard : cardInfo.state
-    //   }
-    // }));
   }, [karutaLines]);
 
   // 0以上max未満の乱数（整数）を1つ返す関数。
@@ -101,14 +93,6 @@ export default function Home() {
   };
 
   const ReadOneText = (): void => {
-    // 直前に読み上げたカードを薄色表示にする。
-    setKarutaLines(karutaLines.map(function(cardInfo: CardInfo): CardInfo {
-      return {
-        text: cardInfo.text,
-        state: cardInfo.state === CardState.CurrentCard ? CardState.AlreadyRead : cardInfo.state
-      }
-    }));
-
     let cardIndex = -1;
     do {
       cardIndex = GetRanddomNumber(karutaLines.length);
