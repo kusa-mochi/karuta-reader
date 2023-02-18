@@ -2,8 +2,10 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import styled from 'styled-components'
+import 'text-to-speech-offline'
 
 export default function Home() {
+  const TTS = require('text-to-speech-offline');
   const MainContainer = styled.div`
     font-size: 32px;
   `;
@@ -17,7 +19,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <MainContainer>
-        てすてす
+        <button onClick={() => TTS("すずかわあやこ", 'ja-JP')}>すずかわあやこ</button>
       </MainContainer>
     </>
   )
