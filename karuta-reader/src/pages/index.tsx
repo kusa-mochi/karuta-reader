@@ -44,6 +44,19 @@ export default function Home() {
     max-height: 500px;
     opacity: 0.4;
   `;
+  const ReadButtonContainer = styled.div`
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 4px;
+  `;
+  const ReadButton = styled.button`
+    width: 50%;
+    height: 200px;
+    font-size: 20px;
+  `;
   enum CardState {
     NotReadYet = 0,
     CurrentCard,
@@ -56,7 +69,7 @@ export default function Home() {
 
   let currentCardIndex: number = -1;
   const [karutaLines, setKarutaLines] = useState<CardInfo[]>([]);
-  const [readButtonDisability, setReadButtonDisability] = useState<boolean>(false);
+  const [readButtonDisability, setReadButtonDisability] = useState<boolean>(true);
 
   // karutaLines更新後に実行する処理
   useEffect(() => {
@@ -165,7 +178,9 @@ export default function Home() {
             }
           })}
         </CardsContainer>
-        <button onClick={ReadOneText} disabled={readButtonDisability}>読み上げる</button>
+        <ReadButtonContainer>
+          <ReadButton onClick={ReadOneText} disabled={readButtonDisability}>読み上げる</ReadButton>
+        </ReadButtonContainer>
       </MainContainer>
     </>
   )
