@@ -3,7 +3,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Iceberg, Inter } from '@next/font/google'
 import styled from 'styled-components'
-import SpeechText from '@/ts-common/tts'
+import SpeechText from '@/ts-common/SpeechText'
 
 export default function Home() {
   const MainContainer = styled.div`
