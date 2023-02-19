@@ -3,10 +3,9 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Iceberg, Inter } from '@next/font/google'
 import styled from 'styled-components'
-import 'text-to-speech-offline'
+import SpeechText from '@/ts-common/tts'
 
 export default function Home() {
-  const TTS = require('text-to-speech-offline');
   const MainContainer = styled.div`
     font-size: 20px;
   `;
@@ -76,7 +75,7 @@ export default function Home() {
     console.log(karutaLines);
     if(karutaLines.length > 0 && isGameOver()) {
       setReadButtonDisability(true);
-      setTimeout(() => TTS("ゲーム終了です", "ja-JP"), 5000);
+      setTimeout(() => SpeechText("ゲーム終了です", "ja-JP"), 5000);
     } else {
       setReadButtonDisability(false);
     }
@@ -151,7 +150,7 @@ export default function Home() {
     }));
 
     // テキストを読み上げる。
-    TTS(karutaLines[currentCardIndex].text, 'ja-JP');
+    SpeechText(karutaLines[currentCardIndex].text, 'ja-JP');
   };
 
   return (
