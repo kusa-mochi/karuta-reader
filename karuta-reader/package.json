@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "export": "next build && next export",
-    "serve": "next build && next export && serve ./out",
+    "export": "next build && next export -o electron-src/out/",
+    "serve": "next build && next export && serve ./electron-src/out",
     "lint": "next lint"
   },
   "dependencies": {
