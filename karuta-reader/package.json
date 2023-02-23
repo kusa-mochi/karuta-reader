@@ -1,6 +1,9 @@
 {
   "name": "karuta-reader",
   "version": "0.1.0",
+  "main": "electron-src/main.js",
+  "author": "kusa-mochi",
+  "license": "GPL-3.0",
   "private": true,
   "scripts": {
     "export": "next build && next export -o electron-src/out/",
@@ -22,6 +25,8 @@
   },
   "devDependencies": {
     "@types/styled-components": "^5.1.26",
+    "electron": "^23.1.1",
+    "electron-builder": "^23.6.0",
     "serve": "^14.2.0"
   }
 }
