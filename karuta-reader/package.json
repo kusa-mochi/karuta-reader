@@ -9,7 +9,37 @@
     "export": "next build && next export -o electron-src/out/",
     "serve": "next build && next export -o electron-src/out/ && serve ./electron-src/out",
     "lint": "next lint",
-    "dev": "next build && next export -o electron-src/out/ && electron ."
+    "dev": "next build && next export -o electron-src/out/ && electron .",
+    "dist:linux": "next build && next export -o electron-src/out/ && electron-builder --linux",
+    "dist:win": "next build && next export -o electron-src/out/ && electron-builder --win"
+  },
+  "build": {
+    "appId": "com.kusa-mochi.karuta-reader",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "package.json",
+      "package-lock.json",
+      "electron-src"
+    ],
+    "linux": {
+      "target": {
+        "target": "AppImage",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      }
+    },
+    "win": {
+      "target": {
+        "target": "portable",
+        "arch": [
+          "x64"
+        ]
+      }
+    }
   },
   "dependencies": {
     "@next/font": "13.1.6",
