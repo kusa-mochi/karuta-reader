@@ -1,5 +1,7 @@
-import sound from 'sound-play';
-import {gTTS} from 'gtts.js';
+// import "../@types/gtts";
+// import gTTS from "gtts";
+import Audic from "audic";
+const gTTS = require("gtts");
 
 const SpeechUsingBrowserEngine = async (text: string, language: string = "ja-JP", volume: number = 1, rate: number = 1, pitch: number = 1.2): Promise<void> => {
     const utterance: SpeechSynthesisUtterance = new SpeechSynthesisUtterance(text);
@@ -21,14 +23,17 @@ const SpeechUsingGTTS = async (text: string, language: string = "ja-JP"): Promis
         default:
             break;
     }
-    const gtts = new gTTS(text, lang);
-    // const onSaveMp3File = async (err: any, result: any) => {
-    //     if(err) throw new Error(err);
-    //     sound.play(mp3FileName);
-    // };
+    const tts = new gTTS(text, lang);
+    const onSaveMp3File = async (err: any, result: any) => {
+        if (err) throw new Error(err);
+        const audic = new Audic(mp3FileName);
+        await audic.play();
+        audic.addEventListener('ended', () => {
+            audic.destroy();
+        })
+    };
 
-    await gtts.save(mp3FileName);
-    sound.play(mp3FileName);
+    tts.save(mp3FileName, onSaveMp3File);
 }
 
 const SpeechText = async (engine: TTSEngine, text: string, language: string = "ja-JP", volume: number = 1, rate: number = 1, pitch: number = 1.2): Promise<void> => {
