@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import Image from 'next/image'
 import { Iceberg, Inter } from '@next/font/google'
 import styled from 'styled-components'
-import SpeechText from '@/ts-common/SpeechText'
+import SpeechText, { TTSEngine } from '@/ts-common/SpeechText'
 
 export default function Home() {
   const MainContainer = styled.div`
@@ -73,9 +73,9 @@ export default function Home() {
   // karutaLines更新後に実行する処理
   useEffect(() => {
     console.log(karutaLines);
-    if(karutaLines.length > 0 && isGameOver()) {
+    if (karutaLines.length > 0 && isGameOver()) {
       setReadButtonDisability(true);
-      setTimeout(() => SpeechText("ゲーム終了です", "ja-JP"), 5000);
+      setTimeout(() => SpeechText(TTSEngine.gTTS, "ゲーム終了です", "ja-JP"), 5000);
     } else {
       setReadButtonDisability(false);
     }
@@ -99,7 +99,7 @@ export default function Home() {
         let lines = fileContent.split(/\r\n|\n/);
         lines = lines.filter(line => line != "");
         console.log(`length of lines:${lines.length}`);
-        setKarutaLines(lines.map(function(line: string): CardInfo {
+        setKarutaLines(lines.map(function (line: string): CardInfo {
           return {
             text: line,
             state: CardState.NotReadYet
@@ -130,8 +130,8 @@ export default function Home() {
 
     const currentCardText: string = karutaLines[currentCardIndex].text;
     // 直前に読み上げたカードを薄色表示にする。現在のカードを協調表示にする。
-    setKarutaLines(karutaLines.map(function(cardInfo: CardInfo): CardInfo {
-      if(cardInfo.state === CardState.CurrentCard) {
+    setKarutaLines(karutaLines.map(function (cardInfo: CardInfo): CardInfo {
+      if (cardInfo.state === CardState.CurrentCard) {
         return {
           text: cardInfo.text,
           state: CardState.AlreadyRead
@@ -150,7 +150,7 @@ export default function Home() {
     }));
 
     // テキストを読み上げる。
-    SpeechText(karutaLines[currentCardIndex].text, 'ja-JP');
+    SpeechText(TTSEngine.gTTS, karutaLines[currentCardIndex].text, 'ja-JP');
   };
 
   return (
@@ -164,7 +164,7 @@ export default function Home() {
       <MainContainer>
         <input type="file" onChange={LoadTextFile}></input>
         <CardsContainer>
-          {karutaLines.map(function(lineInfo) {
+          {karutaLines.map(function (lineInfo) {
             switch (lineInfo.state) {
               case CardState.AlreadyRead:
                 return (<UsedCard key={lineInfo.text}>{lineInfo.text}</UsedCard>);
