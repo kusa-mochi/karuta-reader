@@ -13,6 +13,7 @@ function createWindow (){
     contextIsolation: false,
     preload: __dirname + '/preload.js'
   }});
+  mainWindow.setMenuBarVisibility(false);
   mainWindow.loadURL('file://' + __dirname + '/out/index.html');
 }
 
