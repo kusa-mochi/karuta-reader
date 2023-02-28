@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karuta Reader</title>
+    <style>
+        #karuta-reader-cards {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            align-items: flex-start;
+            align-content: flex-start;
+        }
+
+        #karuta-reader-cards .card {
+            margin: 4px;
+            border: 1px solid #303030;
+            border-radius: 8px;
+            padding: 8px;
+            max-width: 400px;
+            max-height: 500px;
+        }
+
+        #karuta-reader-cards .card.current-card {
+            border: 1px solid #cfa984;
+            background-color: #ffdfbf;
+        }
+
+        #karuta-reader-cards .card.used-card {
+            opacity: 0.4;
+        }
+
+        #karuta-reader-read-button-container {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            justify-content: flex-start;
+            align-items: center;
+            margin: 4px;
+        }
+
+        #read-button {
+            width: 50%;
+            height: 200px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="karuta-reader-main-container">
+        <input type="file" onChange="onFileLoaded(this)"></input>
+        <div id="karuta-reader-cards">
+
+        </div>
+        <div id="karuta-reader-read-button-container">
+            <button id="read-button" onClick="readOneText()">読み上げる</button>
+        </div>
+    </div>
+    <script>
+        const CardState = Object.freeze({
+            NotReadYet: 0,
+            CurrentCard: 1,
+            AlreadyRead: 2,
+        });
+
+        let karutaLines = [];
+
+        function SpeechText(text, language = "ja-JP", volume = 1, rate = 1, pitch = 1.2) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = language;
+            utterance.rate = rate;
+            utterance.pitch = pitch;
+            utterance.volume = volume;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        };
+
+        // ゲームが終了した場合にtrueを返す関数。
+        function isGameOver() {
+            const numRemainingCards = karutaLines.reduce((sum, cardInfo) => {
+            if (cardInfo.state === CardState.NotReadYet) return (sum + 1);
+                return sum;
+            }, 0);
+
+            return numRemainingCards === 0;
+        }
+
+        // 0以上max未満の乱数（整数）を1つ返す関数。
+        function getRanddomNumber(max) {
+            return Math.floor(Math.random() * max);
+        }
+
+        function clearAllCards() {
+            const cards = document.getElementById("karuta-reader-cards");
+            cards.innerHTML = "";
+        }
+
+        function updateCards() {
+            // すべてのカードを一掃する。
+            clearAllCards();
+
+            const cards = document.getElementById("karuta-reader-cards");
+
+            karutaLines.forEach(line => {
+                let div = document.createElement("div");
+                div.textContent = line.text;
+                switch(line.state) {
+                    case CardState.NotReadYet:
+                        div.setAttribute("class", "card");
+                        break;
+                    case CardState.CurrentCard:
+                        div.setAttribute("class", "card current-card");
+                        break;
+                    case CardState.AlreadyRead:
+                        div.setAttribute("class", "card used-card");
+                        break;
+                }
+
+                cards.append(div);
+            });
+
+            const readButton = document.getElementById("read-button");
+            if(karutaLines.length > 0 && isGameOver()) {
+                // 「読み上げる」ボタンを無効化する。
+                readButton.setAttribute("disabled", "true");
+                setTimeout(() => SpeechText("ゲーム終了です", "ja-JP"), 5000);
+            } else {
+                // 「読み上げる」ボタンを有効化する。
+                readButton.removeAttribute("disabled");
+            }
+        }
+
+        function onFileLoaded(e) {
+            if (e.files && e.files[0]) {
+                const file = e.files[0];
+                console.log(file);
+                const reader = new FileReader();
+                reader.readAsText(file);
+                reader.onload = ev => {
+                    // かるたデータをクリアする。
+                    karutaLines = [];
+
+                    const fileContent = reader.result;
+                    console.log(fileContent);
+                    let lines = fileContent.split(/\r\n|\n/);
+                    lines = lines.filter(line => line != "");
+                    console.log(`length of lines:${lines.length}`);
+                    karutaLines = lines.map(function(line) {
+                        return {
+                            text: line,
+                            state: CardState.NotReadYet
+                        }
+                    });
+                    updateCards();
+                }
+            } else {
+                console.log("failed to upload a file.");
+            }
+        }
+
+        function readOneText() {
+            let cardIndex = -1;
+            do {
+                cardIndex = getRanddomNumber(karutaLines.length);
+            } while (karutaLines[cardIndex].state !== CardState.NotReadYet);
+            currentCardIndex = cardIndex;
+
+            const currentCardText = karutaLines[currentCardIndex].text;
+            // 直前に読み上げたカードを薄色表示にする。現在のカードを協調表示にする。
+            karutaLines = karutaLines.map(function(cardInfo) {
+            if(cardInfo.state === CardState.CurrentCard) {
+                return {
+                text: cardInfo.text,
+                state: CardState.AlreadyRead
+                }
+            } else if (cardInfo.text === currentCardText) {
+                return {
+                text: cardInfo.text,
+                state: CardState.CurrentCard
+                }
+            } else {
+                return {
+                text: cardInfo.text,
+                state: cardInfo.state
+                }
+            }
+            });
+
+            updateCards();
+
+            // テキストを読み上げる。
+            SpeechText(karutaLines[currentCardIndex].text, 'ja-JP');
+        }
+    </script>
+</body>
+</html>
